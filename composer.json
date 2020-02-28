@@ -1,0 +1,5 @@
+{
+   "require":{
+      "pagantis/orders-api-client": "^2.1"
+   } 
+}
