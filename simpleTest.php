@@ -1,15 +1,12 @@
 <?php
 
 //Require the Client library using composer: composer require pagantis/orders-api-client
-require_once('../vendor/autoload.php');
-require_once('variables.php');
+require_once('./vendor/autoload.php');
+include('./variables.php');
 
 /**
  * PLEASE FILL YOUR PUBLIC KEY AND PRIVATE KEY
  */
-const PUBLIC_KEY = $miPUBLIC_KEY; //Set your public key
-const PRIVATE_KEY = $miPRIVATE_KEY; //Set your private key
-const ORDER_ID = $miORDER_ID;
 
 try {
     session_start();
@@ -98,7 +95,7 @@ function createOrder()
     $orderShoppingCart = new \Pagantis\OrdersApiClient\Model\Order\ShoppingCart();
     $orderShoppingCart
         ->setDetails($details)
-        ->setOrderReference(ORDER_ID)
+        ->setOrderReference($_COOKIE['ORDER_ID'])
         ->setPromotedAmount(0) // This amount means that the merchant will asume the interests.
         ->setTotalAmount('59999');
     writeLog('Created OrderShoppingCart object');
@@ -135,10 +132,10 @@ function createOrder()
         ->setUser($orderUser);
 
     writeLog('Creating OrdersApiClient');
-    if (PUBLIC_KEY=='' || PRIVATE_KEY == '') {
+    if ($_COOKIE['PUBLIC_KEY']=='' || $_COOKIE['PRIVATE_KEY'] == '') {
         throw new \Exception('You need set the public and private key');
     }
-    $orderClient = new \Pagantis\OrdersApiClient\Client(PUBLIC_KEY, PRIVATE_KEY);
+    $orderClient = new \Pagantis\OrdersApiClient\Client($_COOKIE['PUBLIC_KEY'], $_COOKIE['PRIVATE_KEY']);
 
     writeLog('Creating Pagantis order');
     $order = $orderClient->createOrder($order);
@@ -176,7 +173,7 @@ function confirmOrder()
      */
 
     writeLog('Creating OrdersApiClient');
-    $orderClient = new \Pagantis\OrdersApiClient\Client(PUBLIC_KEY, PRIVATE_KEY);
+    $orderClient = new \Pagantis\OrdersApiClient\Client($_COOKIE['PUBLIC_KEY'], $_COOKIE['PRIVATE_KEY']);
 
     $order = $orderClient->getOrder($_SESSION['order_id']);
 
